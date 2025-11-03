@@ -7,7 +7,7 @@ import java.net.http.*;
 import java.net.URI;
 
 public class PackingService {
-
+    //Insert new API here and rename method
     private static final String BASE_URL = "https://packingapi.cphbusinessapps.dk/packinglist/";
     private final ObjectMapper mapper = new ObjectMapper();
 

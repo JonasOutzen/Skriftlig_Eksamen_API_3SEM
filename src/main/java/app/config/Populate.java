@@ -4,10 +4,6 @@ import app.entities.Category;
 import app.entities.Guide;
 import app.entities.Trip;
 
-// --- security/domain (adjust packages if yours differ) ---
-import app.security.entities.Role;
-import app.security.entities.User;
-
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
@@ -34,22 +30,6 @@ public final class Populate {
                     .build();
             em.persist(alice);
 
-            Guide bob = Guide.builder()
-                    .guideName("Bob Jensen")
-                    .guideEmail("bob@example.com")
-                    .guidePhone("+45 55 66 77 88")
-                    .guideYearsOfExperience(12.0f)
-                    .build();
-            em.persist(bob);
-
-            Guide carla = Guide.builder()
-                    .guideName("Carla Madsen")
-                    .guideEmail("carla@example.com")
-                    .guidePhone("+45 22 33 44 55")
-                    .guideYearsOfExperience(2.0f)
-                    .build();
-            em.persist(carla);
-
             // ---------- TRIPS ----------
             createTrip(em,
                     "Copenhagen Canals Weekend",
@@ -60,41 +40,6 @@ public final class Populate {
                     Category.CITY,
                     alice);
 
-            createTrip(em,
-                    "Skagen Dunes Retreat",
-                    LocalDate.of(2025, 6, 13),
-                    LocalDate.of(2025, 6, 15),
-                    "57.7200,10.5839",
-                    1899.0f,
-                    Category.BEACH,
-                    bob);
-
-            createTrip(em,
-                    "Rold Forest Hike",
-                    LocalDate.of(2025, 9, 20),
-                    LocalDate.of(2025, 9, 21),
-                    "56.8167,9.8500",
-                    899.0f,
-                    Category.FOREST,
-                    alice);
-
-            createTrip(em,
-                    "Bornholm Cliffs & Lakes",
-                    LocalDate.of(2025, 7, 5),
-                    LocalDate.of(2025, 7, 8),
-                    "55.1604,14.8669",
-                    2299.0f,
-                    Category.SEA,
-                    carla);
-
-            createTrip(em,
-                    "Aarhus City & Sea Day Trip",
-                    LocalDate.of(2025, 8, 10),
-                    LocalDate.of(2025, 8, 10),
-                    "56.1629,10.2039",
-                    499.0f,
-                    Category.CITY,
-                    bob);
 
             tx.commit();
         } catch (RuntimeException ex) {
