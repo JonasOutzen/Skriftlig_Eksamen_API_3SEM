@@ -1,0 +1,210 @@
+@baseUrl = {{baseUrl}}
+@authToken = {{authToken}}
+# Manual override (optional): uncomment and paste a JWT if you want to force a specific token
+# @authToken = eyJhbGciOiJIUzI1NiJ9...
+
+####################################################################
+### SECURITY
+####################################################################
+
+### Health check (open)
+GET {{baseUrl}}/auth/healthcheck
+
+### Test (open)
+GET {{baseUrl}}/auth/test
+
+### Register (returns token). If user exists, skip.
+# @name register
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "username": "testuser",
+  "password": "testpass"
+}
+
+> {%
+  try {
+    const data = JSON.parse(response.body);
+    if (data.token) {
+      client.global.set("authToken", data.token);
+      client.log("Saved authToken from REGISTER: " + data.token);
+    } else {
+      client.log("No token field in register response");
+    }
+  } catch (e) {
+    client.log("Register parse error: " + e);
+  }
+%}
+
+### Login (returns token) — run this to refresh token
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "testuser",
+  "password": "testpass"
+}
+
+> {%
+  try {
+    const data = JSON.parse(response.body);
+    if (data.token) {
+      client.global.set("authToken", data.token);
+      client.log("Saved authToken from LOGIN: " + data.token);
+    } else {
+      client.log("No token field in login response");
+    }
+  } catch (e) {
+    client.log("Login parse error: " + e);
+  }
+%}
+
+### Add ADMIN role to current user (requires USER)
+# After this, run LOGIN again and add the new token to
+#    "baseUrl": "http://localhost:7076/api",
+#    "authToken":
+
+POST {{baseUrl}}/auth/user/addrole
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "role": "ADMIN"
+}
+
+### Login again to get a token that includes ADMIN
+### Set token in client-env
+# @name loginAdmin
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "jonas",
+  "password": "jonaspw"
+}
+
+> {%
+  try {
+    const data = JSON.parse(response.body);
+    if (data.token) {
+      client.global.set("authToken", data.token);
+      client.log("Saved ADMIN authToken from LOGIN: " + data.token);
+    } else {
+      client.log("No token field in login response");
+    }
+  } catch (e) {
+    client.log("Login parse error: " + e);
+  }
+%}
+
+### USER protected demo (needs USER)
+GET {{baseUrl}}/protected/user_demo
+Authorization: Bearer {{authToken}}
+
+### ADMIN protected demo (needs ADMIN)
+GET {{baseUrl}}/protected/admin_demo
+Authorization: Bearer {{authToken}}
+
+####################################################################
+### GUIDES
+####################################################################
+
+### Create guide (ADMIN)
+POST {{baseUrl}}/guides
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "guideName": "Alice Andersen TEST",
+  "guideEmail": "alice@example.com",
+  "guidePhone": "+45 11 22 33 44",
+  "guideYearsOfExperience": 5.5
+}
+
+### Get all guides (open)
+GET {{baseUrl}}/guides
+
+### Get guide by ID (open)
+GET {{baseUrl}}/guides/1
+
+### Update guide (ADMIN)
+PUT {{baseUrl}}/guides/1
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "guideName": "Alice A.",
+  "guideEmail": "alice.a@example.com",
+  "guidePhone": "+45 11 22 33 44",
+  "guideYearsOfExperience": 6.0
+}
+
+### Delete guide (ADMIN)
+DELETE {{baseUrl}}/guides/1
+Authorization: Bearer {{authToken}}
+
+
+
+####################################################################
+### TRIPS
+####################################################################
+
+### Create trip (ADMIN)
+# tripCategory must match your enum (e.g., BEACH, CITY, FOREST, LAKE, SEA, SNOW)
+# Dates are ISO-8601 (yyyy-MM-dd)
+POST {{baseUrl}}/trips
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "tripName": "Bornholm Adventure",
+  "tripStartTime": "2025-07-10",
+  "tripEndTime": "2025-07-14",
+  "tripLocationCoordinates": "55.1604,14.8669",
+  "tripPrice": 1299.0,
+  "tripCategory": "SEA",
+  "guideId": 2
+}
+
+### Get all trips (open)
+GET {{baseUrl}}/trips
+
+### Get trip by ID (open) — returns WRAPPER (trip + guide + packing items)
+GET {{baseUrl}}/trips/2
+
+### Update trip (ADMIN)
+PUT {{baseUrl}}/trips/1
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "tripName": "Bornholm Adventure (Updated)",
+  "tripStartTime": "2025-07-11",
+  "tripEndTime": "2025-07-15",
+  "tripLocationCoordinates": "55.1604,14.8669",
+  "tripPrice": 1399.0,
+  "tripCategory": "SEA",
+  "guideId": 2
+}
+
+### Delete trip (ADMIN)
+DELETE {{baseUrl}}/trips/1
+Authorization: Bearer {{authToken}}
+
+### Assign guide to trip (ADMIN)
+PUT {{baseUrl}}/trips/5/guides/3
+Authorization: Bearer {{authToken}}
+
+### Get Total packing weight for a trip (open)
+GET {{baseUrl}}/trips/4/packing/weight
+Authorization: Bearer {{authToken}}
+
+### GET trips from category
+GET {{baseUrl}}/trips?category=beach
+Authorization: Bearer {{authToken}}
+
+### Get total price for all guides
+GET {{baseUrl}}/trips/guides/totalprice
+Authorization: Bearer {{authToken}}
