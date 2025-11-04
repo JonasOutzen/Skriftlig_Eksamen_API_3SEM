@@ -44,6 +44,23 @@ public class CandidateController implements IController<CandidateDTO, Integer> {
 
     @Override
     public void readAll(Context ctx) {
+        // read-all with category /candidates?category={category}
+        String categoryParam = ctx.queryParam("category");
+        if (categoryParam != null && !categoryParam.isBlank()) {
+            try {
+                SkillCategory category = SkillCategory.valueOf(categoryParam.toUpperCase(java.util.Locale.ROOT));
+                List<CandidateDTO> filtered = candidateDAO.findCandidatesBySkillCategory(category);
+
+                ctx.status(200).json(filtered);
+
+                return;
+            } catch (IllegalArgumentException e) {
+                ctx.status(400).result("Invalid category: " + categoryParam);
+                return;
+            }
+        }
+
+        // Normal readall without ?category just /candidates
         List<CandidateDTO> all = candidateDAO.readAll();
         ctx.status(200).json(all);
     }
@@ -105,25 +122,6 @@ public class CandidateController implements IController<CandidateDTO, Integer> {
                 .check(c -> c.getCandidatePhone() != null && !c.getCandidatePhone().isBlank(), "Phone is required")
                 .check(c -> c.getCandidateEducation() != null && !c.getCandidateEducation().isBlank(), "Education is required")
                 .get();
-    }
-
-    public void readByCategory(Context ctx) {
-        String categoryParam = ctx.pathParam("category");
-
-        try {
-            SkillCategory category = SkillCategory.valueOf(categoryParam.toUpperCase());
-            List<CandidateDTO> filteredCandidateList = candidateDAO.findCandidatesBySkillCategory(category);
-
-            if (filteredCandidateList.isEmpty()) {
-                ctx.status(404).result("No candidates found with skill category: " + category);
-                return;
-            }
-
-            ctx.status(200).json(filteredCandidateList);
-
-        } catch (IllegalArgumentException e) {
-            ctx.status(400).result("Invalid category: " + categoryParam);
-        }
     }
 
     public void readDetails(Context ctx) {
