@@ -63,7 +63,7 @@ Content-Type: application/json
 
 ### Add ADMIN role to current user (requires USER)
 # After this, run LOGIN again and add the new token to
-#    "baseUrl": "http://localhost:7076/api",
+#    "baseUrl": "http://localhost:7070/api",
 #    "authToken":
 
 POST {{baseUrl}}/auth/user/addrole
@@ -108,71 +108,25 @@ GET {{baseUrl}}/protected/admin_demo
 Authorization: Bearer {{authToken}}
 
 ####################################################################
-### GUIDES
+### Candidates
 ####################################################################
 
-### Create guide (ADMIN)
-POST {{baseUrl}}/guides
-Authorization: Bearer {{authToken}}
-Content-Type: application/json
-
-{
-  "guideName": "Alice Andersen TEST",
-  "guideEmail": "alice@example.com",
-  "guidePhone": "+45 11 22 33 44",
-  "guideYearsOfExperience": 5.5
-}
-
-### Get all guides (open)
-GET {{baseUrl}}/guides
-
-### Get guide by ID (open)
-GET {{baseUrl}}/guides/1
-
-### Update guide (ADMIN)
-PUT {{baseUrl}}/guides/1
-Authorization: Bearer {{authToken}}
-Content-Type: application/json
-
-{
-  "guideName": "Alice A.",
-  "guideEmail": "alice.a@example.com",
-  "guidePhone": "+45 11 22 33 44",
-  "guideYearsOfExperience": 6.0
-}
-
-### Delete guide (ADMIN)
-DELETE {{baseUrl}}/guides/1
-Authorization: Bearer {{authToken}}
-
-
-
-####################################################################
-### TRIPS
-####################################################################
-
-### Create candidate (ADMIN)
-# tripCategory must match your enum (e.g., BEACH, CITY, FOREST, LAKE, SEA, SNOW)
-# Dates are ISO-8601 (yyyy-MM-dd)
+### Create Candidate (ADMIN)
 POST {{baseUrl}}/candidates
 Authorization: Bearer {{authToken}}
 Content-Type: application/json
 
 {
-  "tripName": "Bornholm Adventure",
-  "tripStartTime": "2025-07-10",
-  "tripEndTime": "2025-07-14",
-  "tripLocationCoordinates": "55.1604,14.8669",
-  "tripPrice": 1299.0,
-  "tripCategory": "SEA",
-  "guideId": 2
+  "candidateName": "Endpoint Candidate",
+  "candidatePhone": "+45 11 88 22 33",
+  "candidateEducation": "BSc Computer Science"
 }
 
 ### Get all candidates (open)
 GET {{baseUrl}}/candidates
 
-### Get candidate by ID (open) — returns WRAPPER (candidate + guide + packing items)
-GET {{baseUrl}}/candidates/2
+### Get candidate by ID (open)
+GET {{baseUrl}}/candidates/1
 
 ### Update candidate (ADMIN)
 PUT {{baseUrl}}/candidates/1
@@ -180,31 +134,24 @@ Authorization: Bearer {{authToken}}
 Content-Type: application/json
 
 {
-  "tripName": "Bornholm Adventure (Updated)",
-  "tripStartTime": "2025-07-11",
-  "tripEndTime": "2025-07-15",
-  "tripLocationCoordinates": "55.1604,14.8669",
-  "tripPrice": 1399.0,
-  "tripCategory": "SEA",
-  "guideId": 2
+  "candidateName": "Endpoint Candidate Updated",
+  "candidatePhone": "+45 11 88 22 33",
+  "candidateEducation": "BSc Computer Science"
 }
 
 ### Delete candidate (ADMIN)
-DELETE {{baseUrl}}/candidates/1
+DELETE {{baseUrl}}/candidate/1
 Authorization: Bearer {{authToken}}
 
-### Assign guide to candidate (ADMIN)
-PUT {{baseUrl}}/candidates/5/guides/3
+### Attach skill on candidate
+### Should put a skill on noSkillLarry
+PUT {{baseUrl}}/candidates/3/skills/2
 Authorization: Bearer {{authToken}}
 
-### Get Total packing weight for a candidate (open)
-GET {{baseUrl}}/candidates/4/packing/weight
+### Get candidate with details
+GET {{baseUrl}}/candidates/3/details
 Authorization: Bearer {{authToken}}
 
 ### GET candidates from skillCategory
-GET {{baseUrl}}/candidates?skillCategory=beach
-Authorization: Bearer {{authToken}}
-
-### Get total price for all guides
-GET {{baseUrl}}/candidates/guides/totalprice
+GET {{baseUrl}}/candidates?category=DB
 Authorization: Bearer {{authToken}}

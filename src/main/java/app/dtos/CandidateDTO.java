@@ -25,22 +25,25 @@ public class CandidateDTO {
     private List<Integer> skillIds;
     private Integer skillCount;
 
+    private List<SkillDTO> skills = List.of();
+
     public CandidateDTO(Candidate c) {
         this.candidateId = c.getCandidateId();
         this.candidateName = c.getCandidateName();
         this.candidatePhone = c.getCandidatePhone();
         this.candidateEducation = c.getCandidateEducation();
 
-        Set<Skill> skills = c.getSkills();
-        if (skills != null) {
-            this.skillIds = skills.stream()
-                    .map(Skill::getSkillId)
-                    .collect(Collectors.toList());
-            this.skillCount = skills.size();
+        Set<Skill> set = c.getSkills();
+        if (set != null && !set.isEmpty()) {
+            this.skillIds = set.stream().map(Skill::getSkillId).toList();
+            this.skillCount = set.size();
+            this.skills = set.stream().map(SkillDTO::new).toList(); // <-- BUILD DTOs
         } else {
             this.skillIds = List.of();
             this.skillCount = 0;
+            this.skills = List.of(); // empty list (never null)
         }
+
     }
 
     public Candidate toEntity() {

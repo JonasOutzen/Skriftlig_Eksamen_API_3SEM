@@ -21,6 +21,7 @@ public class SkillDTO {
     private String skillName;
     private SkillCategory skillCategory;
     private String skillDescription;
+    private String skillSlug;
 
     // Many-to-many summary
     private List<Integer> candidateIds;
@@ -31,6 +32,7 @@ public class SkillDTO {
         this.skillName = s.getSkillName();
         this.skillCategory = s.getSkillCategory();
         this.skillDescription = s.getSkillDescription();
+        this.skillSlug = s.getSkillSlug();
 
         Set<Candidate> candidates = s.getCandidates();
         if (candidates != null) {
@@ -50,6 +52,7 @@ public class SkillDTO {
         s.setSkillName(this.skillName);
         s.setSkillCategory(this.skillCategory);
         s.setSkillDescription(this.skillDescription);
+        s.setSkillSlug(this.skillSlug);
         return s;
     }
 
