@@ -28,8 +28,8 @@ public class SkillDAO implements IDAO<SkillDTO, Integer> {
     @Override
     public SkillDTO read(Integer id) {
         try (EntityManager em = emf.createEntityManager()) {
-            Skill entity = em.find(Skill.class, id);
-            return entity != null ? new SkillDTO(entity) : null;
+            Skill skill = em.find(Skill.class, id);
+            return skill != null ? new SkillDTO(skill) : null;
         }
     }
 
@@ -46,10 +46,10 @@ public class SkillDAO implements IDAO<SkillDTO, Integer> {
     public SkillDTO create(SkillDTO dto) {
         try (EntityManager em = emf.createEntityManager()) {
             em.getTransaction().begin();
-            Skill entity = dto.toEntity();
-            em.persist(entity);
+            Skill skill = dto.toEntity();
+            em.persist(skill);
             em.getTransaction().commit();
-            return new SkillDTO(entity);
+            return new SkillDTO(skill);
         }
     }
 
@@ -57,14 +57,14 @@ public class SkillDAO implements IDAO<SkillDTO, Integer> {
     public SkillDTO update(Integer id, SkillDTO dto) {
         try (EntityManager em = emf.createEntityManager()) {
             em.getTransaction().begin();
-            Skill entity = em.find(Skill.class, id);
-            if (entity == null) throw new IllegalArgumentException("Skill not found: " + id);
+            Skill skill = em.find(Skill.class, id);
+            if (skill == null) throw new IllegalArgumentException("Skill not found: " + id);
 
-            entity.setSkillName(dto.getSkillName());
-            entity.setSkillCategory(dto.getSkillCategory());
-            entity.setSkillDescription(dto.getSkillDescription());
+            skill.setSkillName(dto.getSkillName());
+            skill.setSkillCategory(dto.getSkillCategory());
+            skill.setSkillDescription(dto.getSkillDescription());
 
-            Skill merged = em.merge(entity);
+            Skill merged = em.merge(skill);
             em.getTransaction().commit();
             return new SkillDTO(merged);
         }
@@ -74,8 +74,8 @@ public class SkillDAO implements IDAO<SkillDTO, Integer> {
     public void delete(Integer id) {
         try (EntityManager em = emf.createEntityManager()) {
             em.getTransaction().begin();
-            Skill entity = em.find(Skill.class, id);
-            if (entity != null) em.remove(entity);
+            Skill skill = em.find(Skill.class, id);
+            if (skill != null) em.remove(skill);
             em.getTransaction().commit();
         }
     }

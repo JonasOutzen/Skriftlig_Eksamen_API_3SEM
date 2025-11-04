@@ -50,7 +50,6 @@ public class SkillDTO {
         s.setSkillName(this.skillName);
         s.setSkillCategory(this.skillCategory);
         s.setSkillDescription(this.skillDescription);
-        // Relationer håndteres typisk i service/DAO-lag
         return s;
     }
 
