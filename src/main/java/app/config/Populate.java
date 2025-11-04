@@ -1,14 +1,12 @@
 package app.config;
 
-import app.entities.Category;
-import app.entities.Guide;
-import app.entities.Trip;
+import app.entities.Candidate;
+import app.entities.Skill;
+import app.entities.SkillCategory;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
-
-import java.time.LocalDate;
 
 public final class Populate {
 
@@ -21,25 +19,47 @@ public final class Populate {
         try {
             tx.begin();
 
-            // ---------- GUIDES ----------
-            Guide alice = Guide.builder()
-                    .guideName("Alice Andersen")
-                    .guideEmail("alice@example.com")
-                    .guidePhone("+45 11 22 33 44")
-                    .guideYearsOfExperience(5.5f)
+            // ---------- SKILLS ----------
+            Skill java = Skill.builder()
+                    .skillName("Java")
+                    .skillCategory(SkillCategory.PROG_LANG)
+                    .skillDescription("General-purpose JVM language")
                     .build();
+            Skill postgres = Skill.builder()
+                    .skillName("PostgreSQL")
+                    .skillCategory(SkillCategory.DB)
+                    .skillDescription("Relational database")
+                    .build();
+            Skill docker = Skill.builder()
+                    .skillName("Docker")
+                    .skillCategory(SkillCategory.DEVOPS)
+                    .skillDescription("Containerization platform")
+                    .build();
+
+            em.persist(java);
+            em.persist(postgres);
+            em.persist(docker);
+
+            // ---------- CANDIDATES ----------
+            Candidate alice = Candidate.builder()
+                    .candidateName("Alice Andersen")
+                    .candidatePhone("+45 11 22 33 44")
+                    .candidateEducation("BSc Computer Science")
+                    .build();
+
+            Candidate bob = Candidate.builder()
+                    .candidateName("Bob Bæk")
+                    .candidatePhone("+45 33 44 55 66")
+                    .candidateEducation("MSc Software Engineering")
+                    .build();
+
             em.persist(alice);
+            em.persist(bob);
 
-            // ---------- TRIPS ----------
-            createTrip(em,
-                    "Copenhagen Canals Weekend",
-                    LocalDate.of(2025, 5, 2),
-                    LocalDate.of(2025, 5, 4),
-                    "55.6761,12.5683",
-                    1499.0f,
-                    Category.CITY,
-                    alice);
-
+            // ---------- LINKS (Many-to-Many) ----------
+            // Candidate is owning side (@ManyToMany @JoinTable), so we update that side.
+            addSkills(em, alice, java, postgres);
+            addSkills(em, bob, java, docker);
 
             tx.commit();
         } catch (RuntimeException ex) {
@@ -50,27 +70,11 @@ public final class Populate {
         }
     }
 
-    private static Trip createTrip(EntityManager em,
-                                   String name,
-                                   LocalDate start,
-                                   LocalDate end,
-                                   String locationCoordinates,
-                                   float price,
-                                   Category category,
-                                   Guide guide) {
-        Trip trip = Trip.builder()
-                .tripName(name)
-                .tripStartTime(start)
-                .tripEndTime(end)
-                .tripLocationCoordinates(locationCoordinates)
-                .tripPrice(price)
-                .tripCategory(category)
-                .guide(guide)
-                .build();
-
-        em.persist(trip);
-        // keep inverse side in sync if Guide maintains tripSet
-        guide.getTripSet().add(trip);
-        return trip;
+    private static void addSkills(EntityManager em, Candidate candidate, Skill... skills) {
+        for (Skill s : skills) {
+            candidate.getSkills().add(s);     // owning side
+            s.getCandidates().add(candidate); // keep inverse side in sync
+        }
+        em.merge(candidate); // ensures join rows are flushed from owning side
     }
 }
