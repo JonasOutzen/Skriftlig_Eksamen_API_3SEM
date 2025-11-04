@@ -1,17 +1,17 @@
 package app.routes;
 
-import app.routes.impl.TripRoutes;
+import app.routes.impl.CandidateRoutes;
 import io.javalin.apibuilder.EndpointGroup;
 
 import static io.javalin.apibuilder.ApiBuilder.path;
 
 public class Routes {
 
-    private final TripRoutes tripRoutes = new TripRoutes();
+    private final CandidateRoutes candidateRoutes = new CandidateRoutes();
 
     public EndpointGroup getRoutes() {
         return () -> {
-            path("/trips", tripRoutes.getRoutes());
+            path("/candidates", candidateRoutes.getRoutes());
 
         };
     }
