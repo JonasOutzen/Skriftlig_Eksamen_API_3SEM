@@ -12,21 +12,24 @@ public class CandidateRoutes {
 
     public EndpointGroup getRoutes() {
         return () -> {
+            //----- CRUD ROUTES -----
             // post
             post("/", candidateController::create, Role.ADMIN);
-
             // get
             get("/", candidateController::readAll);
             get("/{id}", candidateController::read);
-
             // put
             put("/{id}", candidateController::update, Role.ADMIN);
-
             // del
             delete("/{id}", candidateController::delete, Role.ADMIN);
 
+            //----- OTHER ROUTES -----
             // Assigning skills to candidates
             put("/{candidateId}/skills/{skillId}", candidateController::attachSkill, Role.ADMIN);
+            // Filtering
+            get("/category/{category}", candidateController::readByCategory);
+            // Get candidate details with external skill stats
+            get("/{id}/details", candidateController::readDetails);
         };
     }
 }

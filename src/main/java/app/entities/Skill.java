@@ -35,4 +35,8 @@ public class Skill {
     @Builder.Default
     @ToString.Exclude
     private Set<Candidate> candidates = new HashSet<>();
+
+    @Column(name = "skill_slug", nullable = false, unique = true, length = 100)
+    private String skillSlug;
+
 }

@@ -3,6 +3,7 @@ package app.daos.impl;
 import app.daos.IDAO;
 import app.dtos.CandidateDTO;
 import app.entities.Candidate;
+import app.entities.SkillCategory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.TypedQuery;
@@ -107,5 +108,29 @@ public class CandidateDAO implements IDAO<CandidateDTO, Integer> {
         }
     }
 
+    public List<CandidateDTO> findCandidatesBySkillCategory(SkillCategory category) {
+        try (var em = emf.createEntityManager()) {
+            var query = em.createQuery(" SELECT DISTINCT c FROM Candidate c JOIN c.skills s WHERE s.skillCategory = :category", app.entities.Candidate.class);
+            query.setParameter("category", category);
+
+            List<Candidate> candidates = query.getResultList();
+            return CandidateDTO.toDTOList(candidates);
+        }
+    }
+
+    public List<String> findSkillSlugsForCandidate(Integer candidateId) {
+        try (var em = emf.createEntityManager()) {
+            var q = em.createQuery(" SELECT s.skillSlug FROM Candidate c JOIN c.skills s WHERE c.candidateId = :candidateId", String.class);
+            q.setParameter("candidateId", candidateId);
+            return q.getResultList();
+        }
+    }
+
+    public List<Integer> findAllIds() {
+        try (var em = emf.createEntityManager()) {
+            return em.createQuery("SELECT c.candidateId FROM Candidate c", Integer.class)
+                    .getResultList();
+        }
+    }
 
 }
