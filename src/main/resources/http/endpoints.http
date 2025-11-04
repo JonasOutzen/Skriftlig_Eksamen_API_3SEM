@@ -155,3 +155,8 @@ Authorization: Bearer {{authToken}}
 ### GET candidates from skillCategory
 GET {{baseUrl}}/candidates?category=DB
 Authorization: Bearer {{authToken}}
+
+### Get analystic avg
+GET {{baseUrl}}/reports/candidates/top-by-popularity
+Authorization: Bearer {{authToken}}
+
