@@ -194,4 +194,15 @@ class CandidateDAOTest {
                 .statusCode(200)
                 .body("candidate.size()", greaterThan(0));
     }
+
+    @Test
+    @Order(11)
+    void testAvgPopularity(){
+        given()
+        .when()
+                .get("/reports/candidates/top-by-popularity")
+                .then()
+                .statusCode(200)
+                .body("averagePopularityScore", equalTo(91.5f));
+    }
 }
