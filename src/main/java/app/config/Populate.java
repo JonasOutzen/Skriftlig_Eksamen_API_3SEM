@@ -66,8 +66,7 @@ public final class Populate {
             em.persist(bob);
             em.persist(noskillLarry);
 
-            // ---------- LINKS (Many-to-Many) ----------
-            // Candidate is owning side - therefore we update that
+            // Candidate is the owning side - this is why we add them to candidate
             addSkills(em, alice, java, postgres);
             addSkills(em, bob, java, docker);
 
@@ -82,9 +81,9 @@ public final class Populate {
 
     private static void addSkills(EntityManager em, Candidate candidate, Skill... skills) {
         for (Skill s : skills) {
-            candidate.getSkills().add(s);     // owning side
-            s.getCandidates().add(candidate); // keep inverse side in sync
+            candidate.getSkills().add(s);
+            s.getCandidates().add(candidate);
         }
-        em.merge(candidate); // ensures join rows are flushed from owning side
+        em.merge(candidate);
     }
 }

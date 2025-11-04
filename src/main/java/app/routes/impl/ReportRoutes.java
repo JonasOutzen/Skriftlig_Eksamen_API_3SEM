@@ -10,7 +10,6 @@ public class ReportRoutes {
 
     public EndpointGroup getRoutes() {
         return () -> {
-            // US-6
             get("/candidates/top-by-popularity", reportController::topByPopularity);
         };
     }

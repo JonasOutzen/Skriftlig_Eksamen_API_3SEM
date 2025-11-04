@@ -16,7 +16,7 @@ public class CandidateRoutes {
             // post
             post("/", candidateController::create, Role.ADMIN);
             // get
-            //Also search by category here
+            //Also search by category (?category)
             get("/", candidateController::readAll);
             get("/{id}", candidateController::read);
             // put
@@ -28,6 +28,7 @@ public class CandidateRoutes {
             // Assigning skills to candidates
             put("/{candidateId}/skills/{skillId}", candidateController::attachSkill, Role.ADMIN);
 
+            // Getting candidate details skills etc.
             get("/{id}/details", candidateController::readDetails);
         };
     }
