@@ -37,11 +37,11 @@ public class CandidateDTO {
         if (set != null && !set.isEmpty()) {
             this.skillIds = set.stream().map(Skill::getSkillId).toList();
             this.skillCount = set.size();
-            this.skills = set.stream().map(SkillDTO::new).toList(); // <-- BUILD DTOs
+            this.skills = set.stream().map(SkillDTO::new).toList();
         } else {
             this.skillIds = List.of();
             this.skillCount = 0;
-            this.skills = List.of(); // empty list (never null)
+            this.skills = List.of();
         }
 
     }

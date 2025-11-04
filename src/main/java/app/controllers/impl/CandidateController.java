@@ -155,7 +155,7 @@ public class CandidateController implements IController<CandidateDTO, Integer> {
                         ? java.util.List.of()
                         : externalSkillService.getStatsForSlugs(joined).getData());
 
-        // Wrap and return (use imported WrapperCandidateDetailsDTO)
+        // Wrap and return
         var wrapper = WrapperCandidateDetailsDTO.builder()
                 .candidate(candidate)
                 .market(market)
