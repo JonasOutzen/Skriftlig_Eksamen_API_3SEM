@@ -28,8 +28,8 @@ public class CandidateDAO implements IDAO<CandidateDTO, Integer> {
     @Override
     public CandidateDTO read(Integer id) {
         try (EntityManager em = emf.createEntityManager()) {
-            Candidate entity = em.find(Candidate.class, id);
-            return entity != null ? new CandidateDTO(entity) : null;
+            Candidate candidate = em.find(Candidate.class, id);
+            return candidate != null ? new CandidateDTO(candidate) : null;
         }
     }
 
@@ -46,10 +46,10 @@ public class CandidateDAO implements IDAO<CandidateDTO, Integer> {
     public CandidateDTO create(CandidateDTO dto) {
         try (EntityManager em = emf.createEntityManager()) {
             em.getTransaction().begin();
-            Candidate entity = dto.toEntity();
-            em.persist(entity);
+            Candidate candidate = dto.toEntity();
+            em.persist(candidate);
             em.getTransaction().commit();
-            return new CandidateDTO(entity);
+            return new CandidateDTO(candidate);
         }
     }
 
@@ -57,14 +57,14 @@ public class CandidateDAO implements IDAO<CandidateDTO, Integer> {
     public CandidateDTO update(Integer id, CandidateDTO dto) {
         try (EntityManager em = emf.createEntityManager()) {
             em.getTransaction().begin();
-            Candidate entity = em.find(Candidate.class, id);
-            if (entity == null) throw new IllegalArgumentException("Candidate not found: " + id);
+            Candidate candidate = em.find(Candidate.class, id);
+            if (candidate == null) throw new IllegalArgumentException("Candidate not found: " + id);
 
-            entity.setCandidateName(dto.getCandidateName());
-            entity.setCandidatePhone(dto.getCandidatePhone());
-            entity.setCandidateEducation(dto.getCandidateEducation());
+            candidate.setCandidateName(dto.getCandidateName());
+            candidate.setCandidatePhone(dto.getCandidatePhone());
+            candidate.setCandidateEducation(dto.getCandidateEducation());
 
-            Candidate merged = em.merge(entity);
+            Candidate merged = em.merge(candidate);
             em.getTransaction().commit();
             return new CandidateDTO(merged);
         }
@@ -74,8 +74,8 @@ public class CandidateDAO implements IDAO<CandidateDTO, Integer> {
     public void delete(Integer id) {
         try (EntityManager em = emf.createEntityManager()) {
             em.getTransaction().begin();
-            Candidate entity = em.find(Candidate.class, id);
-            if (entity != null) em.remove(entity);
+            Candidate candidate = em.find(Candidate.class, id);
+            if (candidate != null) em.remove(candidate);
             em.getTransaction().commit();
         }
     }
@@ -83,8 +83,8 @@ public class CandidateDAO implements IDAO<CandidateDTO, Integer> {
     @Override
     public boolean validatePrimaryKey(Integer id) {
         try (EntityManager em = emf.createEntityManager()) {
-            Candidate entity = em.find(Candidate.class, id);
-            return entity != null;
+            Candidate candidate = em.find(Candidate.class, id);
+            return candidate != null;
         }
     }
 }
