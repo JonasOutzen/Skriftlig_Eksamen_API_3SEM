@@ -87,4 +87,25 @@ public class CandidateDAO implements IDAO<CandidateDTO, Integer> {
             return candidate != null;
         }
     }
+
+    public CandidateDTO linkSkill(Integer candidateId, Integer skillId) {
+        try (EntityManager em = emf.createEntityManager()) {
+            em.getTransaction().begin();
+
+            var candidate = em.find(app.entities.Candidate.class, candidateId);
+            if (candidate == null) throw new IllegalArgumentException("Candidate not found: " + candidateId);
+
+            var skill = em.find(app.entities.Skill.class, skillId);
+            if (skill == null) throw new IllegalArgumentException("Skill not found: " + skillId);
+
+            candidate.getSkills().add(skill);
+            skill.getCandidates().add(candidate);
+
+            var merged = em.merge(candidate);
+            em.getTransaction().commit();
+            return new CandidateDTO(merged);
+        }
+    }
+
+
 }
