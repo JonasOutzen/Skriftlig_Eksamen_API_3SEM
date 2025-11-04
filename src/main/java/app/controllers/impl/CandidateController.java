@@ -55,7 +55,7 @@ public class CandidateController implements IController<CandidateDTO, Integer> {
 
                 return;
             } catch (IllegalArgumentException e) {
-                ctx.status(400).result("Invalid category: " + categoryParam);
+                ctx.status(404).result("Invalid category: " + categoryParam);
                 return;
             }
         }
