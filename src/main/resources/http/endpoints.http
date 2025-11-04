@@ -151,10 +151,10 @@ Authorization: Bearer {{authToken}}
 ### TRIPS
 ####################################################################
 
-### Create trip (ADMIN)
+### Create candidate (ADMIN)
 # tripCategory must match your enum (e.g., BEACH, CITY, FOREST, LAKE, SEA, SNOW)
 # Dates are ISO-8601 (yyyy-MM-dd)
-POST {{baseUrl}}/trips
+POST {{baseUrl}}/candidates
 Authorization: Bearer {{authToken}}
 Content-Type: application/json
 
@@ -168,14 +168,14 @@ Content-Type: application/json
   "guideId": 2
 }
 
-### Get all trips (open)
-GET {{baseUrl}}/trips
+### Get all candidates (open)
+GET {{baseUrl}}/candidates
 
-### Get trip by ID (open) — returns WRAPPER (trip + guide + packing items)
-GET {{baseUrl}}/trips/2
+### Get candidate by ID (open) — returns WRAPPER (candidate + guide + packing items)
+GET {{baseUrl}}/candidates/2
 
-### Update trip (ADMIN)
-PUT {{baseUrl}}/trips/1
+### Update candidate (ADMIN)
+PUT {{baseUrl}}/candidates/1
 Authorization: Bearer {{authToken}}
 Content-Type: application/json
 
@@ -189,22 +189,22 @@ Content-Type: application/json
   "guideId": 2
 }
 
-### Delete trip (ADMIN)
-DELETE {{baseUrl}}/trips/1
+### Delete candidate (ADMIN)
+DELETE {{baseUrl}}/candidates/1
 Authorization: Bearer {{authToken}}
 
-### Assign guide to trip (ADMIN)
-PUT {{baseUrl}}/trips/5/guides/3
+### Assign guide to candidate (ADMIN)
+PUT {{baseUrl}}/candidates/5/guides/3
 Authorization: Bearer {{authToken}}
 
-### Get Total packing weight for a trip (open)
-GET {{baseUrl}}/trips/4/packing/weight
+### Get Total packing weight for a candidate (open)
+GET {{baseUrl}}/candidates/4/packing/weight
 Authorization: Bearer {{authToken}}
 
-### GET trips from category
-GET {{baseUrl}}/trips?category=beach
+### GET candidates from skillCategory
+GET {{baseUrl}}/candidates?skillCategory=beach
 Authorization: Bearer {{authToken}}
 
 ### Get total price for all guides
-GET {{baseUrl}}/trips/guides/totalprice
+GET {{baseUrl}}/candidates/guides/totalprice
 Authorization: Bearer {{authToken}}

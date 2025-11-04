@@ -1,7 +1,7 @@
 package app.services;
 
 import app.dtos.packing.PackingListResponse;
-import app.entities.Category;
+import app.entities.SkillCategory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.net.http.*;
 import java.net.URI;
@@ -11,8 +11,8 @@ public class PackingService {
     private static final String BASE_URL = "https://packingapi.cphbusinessapps.dk/packinglist/";
     private final ObjectMapper mapper = new ObjectMapper();
 
-    public PackingListResponse getItemsForCategory(Category category) {
-        String url = BASE_URL + category.name().toLowerCase();
+    public PackingListResponse getItemsForCategory(SkillCategory skillCategory) {
+        String url = BASE_URL + skillCategory.name().toLowerCase();
 
         try {
             // 1. Build a request

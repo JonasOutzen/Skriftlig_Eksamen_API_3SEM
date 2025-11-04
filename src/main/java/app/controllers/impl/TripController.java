@@ -4,10 +4,10 @@ import app.config.HibernateConfig;
 import app.controllers.IController;
 import app.daos.impl.GuideDAO;
 import app.daos.impl.TripDAO;
-import app.dtos.GuideDTO;
-import app.dtos.TripDTO;
+import app.dtos.CandidateDTO;
+import app.dtos.SkillDTO;
 import app.dtos.WrapperTripDetailsDTO;
-import app.entities.Category;
+import app.entities.SkillCategory;
 import app.services.PackingService;
 import io.javalin.http.Context;
 import jakarta.persistence.EntityManagerFactory;
@@ -15,7 +15,7 @@ import jakarta.persistence.EntityManagerFactory;
 import java.util.List;
 import java.util.Map;
 
-public class TripController implements IController<TripDTO, Integer> {
+public class TripController implements IController<SkillDTO, Integer> {
 
     private final TripDAO tripDAO;
     private final GuideDAO guideDAO;
@@ -32,18 +32,18 @@ public class TripController implements IController<TripDTO, Integer> {
         int id = ctx.pathParamAsClass("id", Integer.class)
                 .check(this::validatePrimaryKey, "Not a valid key").get();
         // The DTO
-        TripDTO trip = tripDAO.read(id);
+        SkillDTO trip = tripDAO.read(id);
         if (trip == null) {
             ctx.status(404).result("Trip not found");
             return;
         }
 
         // Finds the guide info for the trip, so we can show it later
-        GuideDTO guide = (trip.getGuideId() != null) ? guideDAO.read(trip.getGuideId()) : null;
+        CandidateDTO guide = (trip.getGuideId() != null) ? guideDAO.read(trip.getGuideId()) : null;
 
         // Packing items From external API
         var packingService = new PackingService();
-        var packingResponse = packingService.getItemsForCategory(trip.getTripCategory());
+        var packingResponse = packingService.getItemsForCategory(trip.getTripSkillCategory());
         var packingItems = packingResponse.getItems();
 
         // Put everything together
@@ -64,11 +64,11 @@ public class TripController implements IController<TripDTO, Integer> {
 
         if (categoryParameter != null && !categoryParameter.isBlank()) {
             try {
-                Category category = Category.valueOf(categoryParameter.toUpperCase());
-                List<TripDTO> trips = tripDAO.allTripsFromCategory(category);
+                SkillCategory skillCategory = SkillCategory.valueOf(categoryParameter.toUpperCase());
+                List<SkillDTO> trips = tripDAO.allTripsFromCategory(skillCategory);
 
                 if (trips.isEmpty()) {
-                    ctx.status(404).result("No trips found for category: " + category);
+                    ctx.status(404).result("No trips found for category: " + skillCategory);
                 } else {
                     ctx.status(200).json(trips);
                 }
@@ -77,7 +77,7 @@ public class TripController implements IController<TripDTO, Integer> {
                 ctx.status(400).result("Invalid category: " + categoryParameter);
             }
         } else {
-            List<TripDTO> allTrips = tripDAO.readAll();
+            List<SkillDTO> allTrips = tripDAO.readAll();
             ctx.status(200).json(allTrips);
         }
     }
@@ -85,12 +85,12 @@ public class TripController implements IController<TripDTO, Integer> {
     @Override
     public void create(Context ctx) {
         // Request
-        TripDTO jsonRequest = ctx.bodyAsClass(TripDTO.class);
+        SkillDTO jsonRequest = ctx.bodyAsClass(SkillDTO.class);
         // DTO
-        TripDTO tripDTO = tripDAO.create(jsonRequest);
+        SkillDTO skillDTO = tripDAO.create(jsonRequest);
         // Response
         ctx.res().setStatus(201);
-        ctx.json(tripDTO, TripDTO.class);
+        ctx.json(skillDTO, SkillDTO.class);
     }
 
     @Override
@@ -98,10 +98,10 @@ public class TripController implements IController<TripDTO, Integer> {
         // Request
         int id = ctx.pathParamAsClass("id", Integer.class).check(this::validatePrimaryKey, "Not a valid id").get();
         // DTO
-        TripDTO tripDTO = tripDAO.update(id, validateEntity(ctx));
+        SkillDTO skillDTO = tripDAO.update(id, validateEntity(ctx));
         // Response
         ctx.res().setStatus(200);
-        ctx.json(tripDTO, TripDTO.class);
+        ctx.json(skillDTO, SkillDTO.class);
     }
 
     @Override
@@ -121,14 +121,14 @@ public class TripController implements IController<TripDTO, Integer> {
     }
 
     @Override
-    public TripDTO validateEntity(Context ctx) {
-        return ctx.bodyValidator(TripDTO.class)
+    public SkillDTO validateEntity(Context ctx) {
+        return ctx.bodyValidator(SkillDTO.class)
                 .check(s -> s.getTripName() != null && !s.getTripName().isEmpty(), "Trip name must be set")
                 .check(s -> s.getGuideId() != null, "Guide ID must be set")
                 .check(s -> s.getTripLocationCoordinates() != null && !s.getTripLocationCoordinates().isEmpty(), "Location must be set")
                 .check(s -> s.getTripStartTime() != null, "Trip start time must be set")
                 .check(s -> s.getTripEndTime() != null, "Trip end time must be set")
-                .check(s -> s.getTripCategory() != null, "Trip category must be set")
+                .check(s -> s.getTripSkillCategory() != null, "Trip category must be set")
                 .check(s -> s.getTripPrice() != null, "Trip price must be set")
                 .get();
     }
@@ -139,12 +139,12 @@ public class TripController implements IController<TripDTO, Integer> {
         int guideId = ctx.pathParamAsClass("guideid", Integer.class).get();
 
         try {
-            TripDTO updated = tripDAO.assignGuideToTrip(tripId, guideId);
+            SkillDTO updated = tripDAO.assignGuideToTrip(tripId, guideId);
             if (updated == null) {
                 ctx.status(404).result("Trip not found");
                 return;
             }
-            ctx.status(200).json(updated, TripDTO.class);
+            ctx.status(200).json(updated, SkillDTO.class);
         } catch (IllegalArgumentException e) {
             // thrown when the guide doesn't exist (see DAO below)
             ctx.status(404).result(e.getMessage());
