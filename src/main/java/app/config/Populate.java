@@ -22,16 +22,19 @@ public final class Populate {
             // ---------- SKILLS ----------
             Skill java = Skill.builder()
                     .skillName("Java")
+                    .skillSlug("Java")
                     .skillCategory(SkillCategory.PROG_LANG)
                     .skillDescription("General-purpose JVM language")
                     .build();
             Skill postgres = Skill.builder()
                     .skillName("PostgreSQL")
+                    .skillSlug("PostgreSQL")
                     .skillCategory(SkillCategory.DB)
                     .skillDescription("Relational database")
                     .build();
             Skill docker = Skill.builder()
                     .skillName("Docker")
+                    .skillSlug("Docker")
                     .skillCategory(SkillCategory.DEVOPS)
                     .skillDescription("Containerization platform")
                     .build();
@@ -53,11 +56,18 @@ public final class Populate {
                     .candidateEducation("MSc Software Engineering")
                     .build();
 
+            Candidate noskillLarry = Candidate.builder()
+                    .candidateName("Larry no skills")
+                    .candidatePhone("+45 12 44 12 66")
+                    .candidateEducation("MSc Software Engineering")
+                    .build();
+
             em.persist(alice);
             em.persist(bob);
+            em.persist(noskillLarry);
 
             // ---------- LINKS (Many-to-Many) ----------
-            // Candidate is owning side (@ManyToMany @JoinTable), so we update that side.
+            // Candidate is owning side - therefore we update that
             addSkills(em, alice, java, postgres);
             addSkills(em, bob, java, docker);
 
